@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Environment variables (NEVER commit tokens)
+.env
+
+# State data (user-specific runtime data)
+data/state.json
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Package manager
+package-lock.json
