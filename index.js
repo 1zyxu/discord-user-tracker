@@ -4,7 +4,8 @@ const {
   PermissionsBitField, ChannelType,
   ContainerBuilder, TextDisplayBuilder,
   SectionBuilder, ThumbnailBuilder,
-  SeparatorBuilder, SeparatorSpacingSize, MessageFlags
+  SeparatorBuilder, SeparatorSpacingSize, MessageFlags,
+  REST, Routes, SlashCommandBuilder
 } = require('discord.js');
 const { Client: SelfClient } = require('discord.js-selfbot-v13');
 const fs = require('fs');
@@ -1276,8 +1277,48 @@ bot.once('clientReady', async () => {
   console.log(`  ${'─'.repeat(32)}`);
   log.success('BOT', `${c.white}${bot.user.tag}${c.reset} ${c.gray}· ready${c.reset}`);
 
-  // Verify all tracked users' channels exist — remove stale entries
-  // Also fetch and store username if missing
+  // ── Auto-deploy slash commands ────────────────────────────────────────────
+  try {
+    const commands = [
+      new SlashCommandBuilder()
+        .setName('adduser')
+        .setDescription('Start tracking a Discord user')
+        .addStringOption(opt =>
+          opt.setName('userid')
+            .setDescription('The Discord user ID to track')
+            .setRequired(true)
+            .setAutocomplete(true)
+        )
+        .toJSON(),
+      new SlashCommandBuilder()
+        .setName('removeuser')
+        .setDescription('Stop tracking a Discord user')
+        .addStringOption(opt =>
+          opt.setName('userid')
+            .setDescription('Select a tracked user to remove')
+            .setRequired(true)
+            .setAutocomplete(true)
+        )
+        .toJSON(),
+      new SlashCommandBuilder()
+        .setName('mutual')
+        .setDescription('Find mutual servers with a user')
+        .addStringOption(opt =>
+          opt.setName('userid')
+            .setDescription('The Discord user ID to check mutuals for')
+            .setRequired(true)
+        )
+        .toJSON()
+    ];
+
+    const rest = new REST({ version: '10' }).setToken(process.env.BOT_TOKEN);
+    await rest.put(Routes.applicationCommands(process.env.CLIENT_ID), { body: commands });
+    log.success('DEPLOY', `Slash commands registered globally`);
+  } catch (err) {
+    log.error('DEPLOY', `Failed to register commands: ${err.message}`);
+  }
+
+  // ── Verify tracked users' channels — remove stale entries ─────────────────
   for (const [userId, tracked] of Object.entries(state.trackedUsers)) {
     const guild    = bot.guilds.cache.get(tracked.guildId);
     const audit    = await guild?.channels.fetch(tracked.auditChannelId).catch(() => null);

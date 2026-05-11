@@ -4,8 +4,7 @@
   "description": "Discord Stalker Bot - tracks user presence, activity, VC, messages",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "deploy": "node deploy.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "debug": "^4.4.3",

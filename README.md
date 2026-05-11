@@ -2,111 +2,112 @@
   <img src="https://img.shields.io/badge/discord.js-v14-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="discord.js v14"/>
   <img src="https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js 18+"/>
   <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="MIT License"/>
-  <img src="https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge" alt="Active"/>
 </p>
 
-<h1 align="center">👁️ Stalker Bot</h1>
+<h1 align="center">Stalker Bot</h1>
 <p align="center">
-  <strong>Advanced Discord User Activity Tracker</strong><br/>
-  <em>Real-time presence monitoring, voice tracking, message logging & invisible detection — all delivered through Discord's Components V2 UI.</em>
+  <strong>Real-time Discord user activity tracker with full audit logging</strong><br/>
+  <sub>Presence monitoring · Voice tracking · Message logging · Invisible detection · Mutual server discovery</sub>
 </p>
 
 ---
 
-## 🔍 Overview
+## Overview
 
-**Stalker Bot** is a powerful Discord activity tracking system that monitors targeted users in real-time across all shared servers. It uses a **dual-client architecture** — a standard bot for sending rich UI notifications and a self/user client for deep presence tracking — to deliver comprehensive audit logs directly into private Discord channels.
+Stalker Bot is an advanced Discord activity tracking system built on a **dual-client architecture**. A standard bot client handles slash commands and sends rich UI notifications (Components V2), while a self/user client provides deep, cross-server presence tracking that regular bots cannot achieve. All activity is logged into private, auto-generated Discord channels — one for online/offline status, one for the full audit trail.
 
-> **⚠️ Disclaimer:** This project is intended for **educational and personal use only**. Tracking users without their knowledge or consent may violate Discord's Terms of Service and local privacy laws. Use responsibly.
-
----
-
-## ✨ Features
-
-### 🟢 Presence Tracking
-- **Status Changes** — Online, Idle, DND, Offline transitions with session duration
-- **Platform Detection** — Desktop, Mobile, Web client identification with change alerts
-- **Custom Status** — Captures emoji and text custom status updates
-- **Invisible Detection** — Flags users who appear offline but are typing, sending messages, or joining voice
-
-### 🎮 Activity Monitoring
-- **Game Activity** — Detects when a user starts/stops playing games with party info
-- **Spotify Integration** — Song name, artist, album, album art, and direct Spotify links
-- **Streaming** — Captures stream URL and details
-- **Watching / Competing** — Tracks all Discord activity types
-
-### 🎤 Voice Channel Tracking
-- **Join / Leave / Move** — Logs all VC state changes with server and channel info
-- **Live VC Panel** — Auto-updating message showing current VC members with individual timers
-- **Session History** — On leave, posts a detailed summary with all members encountered and time spent
-- **State Changes** — Mute, deafen, video, screen share, stage speaker/audience transitions
-- **Invisible VC Detection** — Alerts when an "offline" user joins voice
-
-### 💬 Message Logging
-- **Message Sent** — Logs content, attachments, and jump links
-- **Message Edited** — Shows before/after comparison
-- **Message Deleted** — Recovers cached content
-- **VC Chat** — Distinguishes voice channel text messages
-- **Typing Indicator** — Logs typing events with cooldown
-
-### 👤 Profile Changes
-- **Avatar Changed** — Old and new avatar URLs
-- **Username Changed** — Before/after comparison
-- **Display Name Changed** — Tracks global name updates
-
-### 🛠️ System Features
-- **Slash Commands** — `/adduser`, `/removeuser`, `/mutual` with autocomplete
-- **Auto Channel Setup** — Creates private category + channels per tracked user
-- **Persistent State** — JSON-based state survives restarts
-- **Stale Entry Cleanup** — Automatically removes tracking entries with deleted channels
-- **Presence Re-subscription** — Periodic gateway re-subscription to prevent presence drops
-- **Components V2 UI** — Rich, structured message layout using Discord's latest components
+> **Disclaimer:** This project is for educational and personal use only. Tracking users without consent may violate Discord's Terms of Service and applicable privacy laws. Use responsibly.
 
 ---
 
-## 📁 Project Structure
+## Features
+
+### Presence Tracking
+- Real-time status transitions (Online, Idle, DND, Offline) with session duration calculation
+- Platform detection — Desktop, Mobile, Web — with alerts when a new client connects
+- Custom status capture including emoji and text
+- **Invisible detection** — flags users who appear offline but are typing, sending messages, or joining voice channels
+
+### Activity Monitoring
+- **Games** — Detects playing sessions with game name, details, party size, and elapsed time
+- **Spotify** — Song title with direct link, artist, album name, album art thumbnail, and play start time
+- **Streaming** — Stream URL and platform details
+- **Watching / Competing** — Logs all remaining Discord activity types
+- **Stopped** — Logs when any activity ends
+
+### Voice Channel Tracking
+- Join, leave, and move events with server/channel context and jump links
+- **Live VC panel** — an auto-updating message (refreshes every 10s) showing all members in the channel with individual time counters
+- **Session history** — when the tracked user leaves, a detailed summary is posted listing every member encountered, sorted by time spent together
+- Mute, deafen, video, screen share, and stage speaker/audience state changes
+- Server-side mute/deafen by admins is logged separately
+
+### Message Logging
+- Messages sent — content (up to 500 chars), attachments with links, and jump URL
+- Messages edited — before/after comparison
+- Messages deleted — recovers content from internal cache
+- VC chat messages are tagged separately
+- Typing events with 30-second cooldown
+
+### Profile Changes
+- Avatar, username, and display name changes with before/after values
+
+### Mutual Server Discovery
+The `/mutual` command scans all servers the self client is in and identifies which ones the target user is also a member of. For each mutual server it reports:
+- Server name and ID
+- Member count
+
+This is useful for understanding a user's server footprint across Discord — particularly servers you share but may not have been aware of.
+
+### System
+- **Auto-deploy** — Slash commands register automatically on bot startup (no separate deploy step)
+- **Auto channel setup** — `/adduser` creates a private category with `#is-online` and `#audit` channels, visible only to the command invoker
+- **Persistent state** — JSON file survives restarts; tracks status, VC sessions, platform, and more
+- **Stale cleanup** — Removes tracking entries if their channels are deleted
+- **Presence re-subscription** — Re-subscribes to Discord gateway every 2 minutes to prevent presence updates from dropping
+- **Components V2 UI** — All notifications use Discord's container/section/separator components for clean, structured layout
+
+---
+
+## Project Structure
 
 ```
 stalker/
-├── index.js          # Main application — all tracking logic, event handlers, and UI
-├── deploy.js         # Slash command registration script
+├── index.js          # Main application — tracking logic, commands, event handlers, UI
+├── deploy.js         # Standalone command registration (optional, commands auto-deploy on startup)
 ├── package.json      # Dependencies and scripts
 ├── .env.example      # Environment variable template
 ├── .gitignore        # Git ignore rules
+├── LICENSE           # MIT License
 └── data/
-    └── state.json    # Runtime state (tracked users, VC sessions, etc.)
+    └── state.json    # Runtime state (auto-generated, gitignored)
 ```
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
-- **Node.js** `v18.0+` — [Download](https://nodejs.org/)
-- **Discord Bot Application** — [Developer Portal](https://discord.com/developers/applications)
-- **Discord User/Self Token** — Required for presence tracking
+- [Node.js](https://nodejs.org/) v18.0 or higher
+- A [Discord Bot Application](https://discord.com/developers/applications) with a bot token
+- A Discord user/self token for the tracking client
 
-### 1. Clone the Repository
+### Installation
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/stalker.git
 cd stalker
-```
-
-### 2. Install Dependencies
-
-```bash
 npm install
 ```
 
-### 3. Configure Environment
+### Configuration
+
+Copy the example environment file and fill in your credentials:
 
 ```bash
 cp .env.example .env
 ```
-
-Edit `.env` with your credentials:
 
 ```env
 BOT_TOKEN=your_bot_token_here
@@ -114,123 +115,108 @@ CLIENT_ID=your_bot_client_id_here
 SELF_TOKEN=your_self_token_here
 ```
 
-### 4. Register Slash Commands
+Optional: Configure custom platform emoji IDs (defaults to standard emoji if omitted).
 
-```bash
-npm run deploy
-```
+### Bot Permissions
 
-### 5. Start the Bot
+In the [Discord Developer Portal](https://discord.com/developers/applications), enable these **Privileged Gateway Intents** on your bot:
+
+- Presence Intent
+- Server Members Intent
+- Message Content Intent
+
+Invite the bot with the `bot` and `applications.commands` scopes. Recommended permission: **Administrator** (or at minimum: Manage Channels, View Channels, Send Messages, Read Message History).
+
+### Run
 
 ```bash
 npm start
 ```
 
----
-
-## ⚙️ Bot Setup (Discord Developer Portal)
-
-1. Create a new application at [discord.com/developers](https://discord.com/developers/applications)
-2. Navigate to **Bot** → Enable the following **Privileged Intents**:
-   - ✅ Presence Intent
-   - ✅ Server Members Intent
-   - ✅ Message Content Intent
-3. Generate an **OAuth2 invite link** with these scopes and permissions:
-   - **Scopes:** `bot`, `applications.commands`
-   - **Permissions:** `Administrator` (or granularly: Manage Channels, View Channels, Send Messages, Read Message History)
-4. Invite the bot to your tracking server
+Slash commands are registered automatically on startup. No separate deploy step is needed.
 
 ---
 
-## 📋 Commands
+## Commands
 
 | Command | Description | Permission |
 |---------|-------------|------------|
-| `/adduser <userid>` | Start tracking a Discord user | Administrator |
-| `/removeuser <userid>` | Stop tracking and delete channels | Administrator |
-| `/mutual <userid>` | Find mutual servers with a user | Administrator |
+| `/adduser <userid>` | Start tracking a user — creates private channels for logging | Administrator |
+| `/removeuser <userid>` | Stop tracking a user and delete their logging channels | Administrator |
+| `/mutual <userid>` | List all servers shared between the self client and the target user | Administrator |
 
-> All commands support **autocomplete** — type a user ID or username and get suggestions.
+All commands support **autocomplete**: type a user ID or partial username to get suggestions. `/removeuser` autocomplete shows only currently tracked users in the current server.
 
-### How Tracking Works
+### Channel Structure
 
-When you run `/adduser`, the bot:
-1. Creates a **private category** named `username.in | userid`
-2. Creates an **#is-online** channel — status change notifications
-3. Creates an **#audit** channel — full activity log (messages, VC, games, Spotify, etc.)
-4. Begins real-time tracking across all shared servers
+When you run `/adduser`, the bot creates:
+
+```
+username.in | 123456789  (Category — private)
+├── #is-online            Status change notifications
+└── #audit                Full activity log
+```
+
+Both channels are visible only to the user who ran the command.
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                   Stalker Bot                       │
-├──────────────────────┬──────────────────────────────┤
-│    Bot Client        │     Self Client              │
-│    (discord.js v14)  │     (selfbot-v13)             │
-│                      │                              │
-│  • Sends messages    │  • Presence tracking         │
-│  • Slash commands    │  • Voice state events        │
-│  • Channel mgmt     │  • Message monitoring         │
-│  • Components V2 UI │  • Typing detection           │
-│                      │  • Guild/member scanning     │
-│                      │  • Gateway subscriptions     │
-└──────────────────────┴──────────────────────────────┘
-                       │
-                       ▼
-              ┌─────────────────┐
-              │   state.json    │
-              │  (Persistent)   │
-              └─────────────────┘
+┌──────────────────────────────────────────────────────┐
+│                    Stalker Bot                       │
+├────────────────────────┬─────────────────────────────┤
+│     Bot Client         │      Self Client            │
+│     (discord.js v14)   │      (selfbot-v13)          │
+│                        │                             │
+│  Slash commands        │  Presence tracking (WS)     │
+│  Channel management    │  Voice state events         │
+│  Components V2 output  │  Message monitoring         │
+│  User update events    │  Typing detection           │
+│  Auto command deploy   │  Guild/member scanning      │
+│                        │  Gateway subscriptions      │
+└────────────────────────┴─────────────────────────────┘
+                         │
+                         ▼
+                ┌─────────────────┐
+                │   state.json    │
+                │  (persistent)   │
+                └─────────────────┘
 ```
 
 ---
 
-## 🖥️ Console Output
+## Console Output
 
-The bot features a color-coded terminal logger with IST timestamps:
+The bot logs all events to the terminal with color-coded tags and IST timestamps:
 
 ```
 12:30:45 AM [BOT]       StalkerBot#1234 · ready
+12:30:45 AM [DEPLOY]    Slash commands registered globally
 12:30:46 AM [SELF]      UserAccount#5678 · 42 guilds
-12:30:46 AM [SELF]      Tracking 3 user(s): 123, 456, 789
-12:30:47 AM [PRESENCE]  123456789  offline → online [desktop+mobile]
+12:30:46 AM [SELF]      Tracking 3 user(s)
+12:30:47 AM [PRESENCE]  123456789  offline → online [desktop]
 12:30:48 AM [VC]        joined General in My Server
 12:31:02 AM [MSG]       username in My Server › #general
 ```
 
 ---
 
-## 🔐 Security Notes
+## Security
 
-- **Never commit your `.env` file** — it contains authentication tokens
-- The `.gitignore` is pre-configured to exclude `.env` and `state.json`
-- `state.json` contains user IDs and channel mappings — treat it as sensitive
-- The self client runs as **invisible** by default
-
----
-
-## 📄 License
-
-This project is licensed under the **MIT License** — see [LICENSE](LICENSE) for details.
+- **Never commit `.env`** — it contains authentication tokens. The `.gitignore` excludes it by default.
+- `state.json` contains user IDs and channel mappings — it is also gitignored.
+- The self client runs in **invisible** mode by default.
 
 ---
 
-## 🤝 Contributing
+## License
 
-Contributions are welcome! Feel free to open issues or submit pull requests.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+[MIT](LICENSE)
 
 ---
 
 <p align="center">
-  <strong>Built with 🖤 and discord.js</strong><br/>
-  <em>If you found this useful, consider giving it a ⭐</em>
+  <sub>If this was useful, consider starring the repository.</sub>
 </p>
