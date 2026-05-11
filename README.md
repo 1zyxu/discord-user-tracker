@@ -1,4 +1,8 @@
 <p align="center">
+  <img src="https://cdn.discordapp.com/attachments/1503494832218308808/1503497032499859526/content.png?ex=6a03903a&is=6a023eba&hm=9ab9899a86218ac4fb50ab57648c47a39abf413b10d0f6c7d377a54a06e881f9" alt="Stalker Banner" width="100%"/>
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/discord.js-v14-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="discord.js v14"/>
   <img src="https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js 18+"/>
   <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="MIT License"/>
@@ -57,15 +61,13 @@ The `/mutual` command scans all servers the self client is in and identifies whi
 - Server name and ID
 - Member count
 
-This is useful for understanding a user's server footprint across Discord — particularly servers you share but may not have been aware of.
-
 ### System
-- **Auto-deploy** — Slash commands register automatically on bot startup (no separate deploy step)
-- **Auto channel setup** — `/adduser` creates a private category with `#is-online` and `#audit` channels, visible only to the command invoker
+- **Auto-deploy** — Slash commands register automatically on bot startup
+- **Auto channel setup** — `/adduser` creates a private category with `#is-online` and `#audit` channels
 - **Persistent state** — JSON file survives restarts; tracks status, VC sessions, platform, and more
 - **Stale cleanup** — Removes tracking entries if their channels are deleted
-- **Presence re-subscription** — Re-subscribes to Discord gateway every 2 minutes to prevent presence updates from dropping
-- **Components V2 UI** — All notifications use Discord's container/section/separator components for clean, structured layout
+- **Presence re-subscription** — Re-subscribes to Discord gateway every 2 minutes to prevent presence drops
+- **Components V2 UI** — All notifications use Discord's container/section/separator components
 
 ---
 
@@ -74,7 +76,7 @@ This is useful for understanding a user's server footprint across Discord — pa
 ```
 stalker/
 ├── index.js          # Main application — tracking logic, commands, event handlers, UI
-├── deploy.js         # Standalone command registration (optional, commands auto-deploy on startup)
+├── deploy.js         # Standalone command registration (optional, auto-deploys on startup)
 ├── package.json      # Dependencies and scripts
 ├── .env.example      # Environment variable template
 ├── .gitignore        # Git ignore rules
@@ -103,8 +105,6 @@ npm install
 
 ### Configuration
 
-Copy the example environment file and fill in your credentials:
-
 ```bash
 cp .env.example .env
 ```
@@ -115,17 +115,15 @@ CLIENT_ID=your_bot_client_id_here
 SELF_TOKEN=your_self_token_here
 ```
 
-Optional: Configure custom platform emoji IDs (defaults to standard emoji if omitted).
-
 ### Bot Permissions
 
-In the [Discord Developer Portal](https://discord.com/developers/applications), enable these **Privileged Gateway Intents** on your bot:
+In the [Discord Developer Portal](https://discord.com/developers/applications), enable these **Privileged Gateway Intents**:
 
 - Presence Intent
 - Server Members Intent
 - Message Content Intent
 
-Invite the bot with the `bot` and `applications.commands` scopes. Recommended permission: **Administrator** (or at minimum: Manage Channels, View Channels, Send Messages, Read Message History).
+Invite the bot with the `bot` and `applications.commands` scopes. Recommended permission: **Administrator**.
 
 ### Run
 
@@ -133,7 +131,7 @@ Invite the bot with the `bot` and `applications.commands` scopes. Recommended pe
 npm start
 ```
 
-Slash commands are registered automatically on startup. No separate deploy step is needed.
+Slash commands are registered automatically on startup. No separate deploy step needed.
 
 ---
 
@@ -141,11 +139,9 @@ Slash commands are registered automatically on startup. No separate deploy step 
 
 | Command | Description | Permission |
 |---------|-------------|------------|
-| `/adduser <userid>` | Start tracking a user — creates private channels for logging | Administrator |
+| `/adduser <userid>` | Start tracking a user — creates private logging channels | Administrator |
 | `/removeuser <userid>` | Stop tracking a user and delete their logging channels | Administrator |
 | `/mutual <userid>` | List all servers shared between the self client and the target user | Administrator |
-
-All commands support **autocomplete**: type a user ID or partial username to get suggestions. `/removeuser` autocomplete shows only currently tracked users in the current server.
 
 ### Channel Structure
 
@@ -156,8 +152,6 @@ username.in | 123456789  (Category — private)
 ├── #is-online            Status change notifications
 └── #audit                Full activity log
 ```
-
-Both channels are visible only to the user who ran the command.
 
 ---
 
@@ -188,8 +182,6 @@ Both channels are visible only to the user who ran the command.
 ---
 
 ## Console Output
-
-The bot logs all events to the terminal with color-coded tags and IST timestamps:
 
 ```
 12:30:45 AM [BOT]       StalkerBot#1234 · ready
